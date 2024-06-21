@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1034348469825",
+    "project_id": "streamapp-4232f",
+    "storage_bucket": "streamapp-4232f.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1034348469825:android:25c60eb93e69a27081f0c0",
+        "android_client_info": {
+          "package_name": "com.example.streaming_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBG4yGwVbJi2PgfCLejDMnSmDTUymzgRIM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

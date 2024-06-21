@@ -1,0 +1,11 @@
+flutter_native_splash:
+  color: "#000000"
+  image: "lib/gambar/g.png"
+  
+
+  android_12:
+    color: "#000000"
+    image: "lib/gambar/g.png"
+
+  web: false
+  
