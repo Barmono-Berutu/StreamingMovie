@@ -159,6 +159,7 @@ class RegisPage extends StatelessWidget {
 
                 // sign in button
                 MyButton(
+                  text: "Registrasi",
                   onTap: () => Regis(context),
                 ),
 
