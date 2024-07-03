@@ -22,7 +22,7 @@ class MyTextField extends StatelessWidget {
         onSubmitted: onSubmitted,
         controller: controller,
         obscureText: obscureText,
-        style: TextStyle(color: Theme.of(context).colorScheme.background),
+        style: TextStyle(color: Colors.black),
         decoration: InputDecoration(
             enabledBorder: const OutlineInputBorder(
               borderSide: BorderSide(color: Colors.white),
@@ -33,9 +33,7 @@ class MyTextField extends StatelessWidget {
             fillColor: Colors.grey.shade200,
             filled: true,
             hintText: hintText,
-            focusColor: Colors.amber,
-            hintStyle:
-                TextStyle(color: Theme.of(context).colorScheme.background)),
+            hintStyle: TextStyle(color: Colors.black)),
       ),
     );
   }

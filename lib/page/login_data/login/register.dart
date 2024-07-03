@@ -85,7 +85,7 @@ class RegisPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xff1f1D2B),
+      backgroundColor: Theme.of(context).colorScheme.background,
       body: Container(
         width: MediaQuery.of(context).size.width,
         height: MediaQuery.of(context).size.height,

@@ -13,6 +13,8 @@ class _ChatScreenState extends State<ChatScreen> {
   late User loggedInUser;
   late String messageText;
 
+  final messageTextController = TextEditingController();
+
   @override
   void initState() {
     super.initState();
@@ -31,40 +33,60 @@ class _ChatScreenState extends State<ChatScreen> {
   }
 
   void sendMessage() {
+    // Ambil teks dari controller
+    messageText = messageTextController.text;
+
+    // Kirim pesan ke Firestore
     _firestore.collection('messages').add({
       'text': messageText,
       'sender': loggedInUser.email,
       'timestamp': FieldValue.serverTimestamp(),
     });
+
+    // Bersihkan TextField setelah mengirim pesan
+    messageTextController.clear();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Chat Group'),
+        title: Text('Layanan'),
       ),
       body: Column(
         children: [
           Expanded(
-            child: MessagesStream(),
+            child: MessagesStream(loggedInUser: loggedInUser),
           ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
+          Container(
+            height: 80,
+            padding: EdgeInsets.all(8),
             child: Row(
               children: [
                 Expanded(
                   child: TextField(
-                    onChanged: (value) {
-                      messageText = value;
-                    },
-                    decoration:
-                        InputDecoration(hintText: 'Enter your message...'),
+                    controller: messageTextController,
+                    onSubmitted: (value) => sendMessage(),
+                    decoration: InputDecoration(
+                      hintText: 'Type a message',
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    ),
                   ),
                 ),
+                SizedBox(
+                  width: 8,
+                ),
                 IconButton(
+                  style: IconButton.styleFrom(
+                    backgroundColor: Theme.of(context).colorScheme.primary,
+                    padding: EdgeInsets.all(10),
+                  ),
+                  color: Theme.of(context).colorScheme.background,
+                  iconSize: 30,
                   icon: Icon(Icons.send),
-                  onPressed: sendMessage,
+                  onPressed: () => sendMessage(),
                 ),
               ],
             ),
@@ -77,6 +99,9 @@ class _ChatScreenState extends State<ChatScreen> {
 
 class MessagesStream extends StatelessWidget {
   final _firestore = FirebaseFirestore.instance;
+  final User loggedInUser; // Tambahkan variabel loggedInUser di sini
+
+  MessagesStream({required this.loggedInUser});
 
   @override
   Widget build(BuildContext context) {
@@ -89,23 +114,30 @@ class MessagesStream extends StatelessWidget {
             child: CircularProgressIndicator(),
           );
         }
+
         final messages = snapshot.data!.docs.reversed;
         List<MessageBubble> messageBubbles = [];
+
         for (var message in messages) {
           final messageText = message['text'];
           final messageSender = message['sender'];
 
+          // Tentukan apakah pengirim pesan adalah pengguna yang sedang login
+          final isMe = messageSender == loggedInUser.email;
+
           final isAdmin = messageSender == 'mono@gmail.com';
           final displaySender = isAdmin ? 'admin' : messageSender;
-          final icon = isAdmin ? Icons.admin_panel_settings : Icons.person;
 
           final messageBubble = MessageBubble(
             sender: displaySender,
             text: messageText,
-            icon: icon,
+            isMe: isMe,
+            isAdmin: isAdmin,
           );
+
           messageBubbles.add(messageBubble);
         }
+
         return ListView(
           reverse: true,
           children: messageBubbles,
@@ -118,21 +150,67 @@ class MessagesStream extends StatelessWidget {
 class MessageBubble extends StatelessWidget {
   final String sender;
   final String text;
-  final IconData icon;
+  final bool isMe;
+  final bool isAdmin;
 
-  MessageBubble({required this.sender, required this.text, required this.icon});
+  MessageBubble({
+    required this.sender,
+    required this.text,
+    required this.isMe,
+    required this.isAdmin,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(10.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 2),
+      child: Row(
+        mainAxisAlignment:
+            isMe ? MainAxisAlignment.end : MainAxisAlignment.start,
         children: [
-          ListTile(
-            leading: Icon(icon),
-            title: Text(sender),
-            subtitle: Text(text),
+          if (!isMe)
+            Icon(isAdmin ? Icons.admin_panel_settings : Icons.person, size: 30),
+          SizedBox(width: 5),
+          Column(
+            crossAxisAlignment:
+                isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+            children: [
+              if (!isMe)
+                Text(
+                  isAdmin ? 'admin' : sender,
+                  style: TextStyle(
+                    fontSize: 12,
+                  ),
+                ),
+              SizedBox(
+                height: 5,
+              ),
+              Material(
+                borderRadius: isMe
+                    ? BorderRadius.only(
+                        topLeft: Radius.circular(30.0),
+                        bottomLeft: Radius.circular(30.0),
+                        bottomRight: Radius.circular(30.0),
+                      )
+                    : BorderRadius.only(
+                        topRight: Radius.circular(30.0),
+                        bottomLeft: Radius.circular(30.0),
+                        bottomRight: Radius.circular(30.0),
+                      ),
+                color: Colors.black,
+                child: Padding(
+                  padding:
+                      EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
+                  child: Text(
+                    text,
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 15.0,
+                    ),
+                  ),
+                ),
+              ),
+            ],
           ),
         ],
       ),
