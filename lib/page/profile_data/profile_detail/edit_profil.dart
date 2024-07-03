@@ -72,9 +72,7 @@ class _Edit_ProfilState extends State<Edit_Profil> {
                         'Phone',
                         '081234567891',
                         CupertinoIcons.phone,
-                        onTap: () {
-                        
-                        },
+                        onTap: () {},
                       ),
                       const SizedBox(height: 10),
                       itemProfile(

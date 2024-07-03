@@ -4,12 +4,14 @@ class MyTextField extends StatelessWidget {
   final controller;
   final String hintText;
   final bool obscureText;
+  final Function(String)? onSubmitted;
 
   const MyTextField({
     super.key,
     required this.controller,
     required this.hintText,
     required this.obscureText,
+    required this.onSubmitted,
   });
 
   @override
@@ -17,6 +19,7 @@ class MyTextField extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 25.0),
       child: TextField(
+        onSubmitted: onSubmitted,
         controller: controller,
         obscureText: obscureText,
         style: TextStyle(color: Theme.of(context).colorScheme.background),
